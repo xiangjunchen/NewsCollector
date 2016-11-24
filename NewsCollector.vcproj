@@ -406,7 +406,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\TPCollectorData.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TPCollectorsEdit.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TPVcPython.cpp"
 				>
 			</File>
 		</Filter>
@@ -436,7 +444,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TPCollectorData.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TPCollectorsEdit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TPVcPython.h"
 				>
 			</File>
 		</Filter>

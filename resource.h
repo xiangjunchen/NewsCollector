@@ -17,6 +17,7 @@
 #define IDC_LIST_COLLOECTOR             1005
 #define IDC_EDIT1                       1006
 #define IDC_EDIT_URL                    1006
+#define IDC_RICHEDIT22                  1008
 
 // Next default values for new objects
 // 
@@ -24,7 +25,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1007
+#define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

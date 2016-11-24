@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "TPCollectorData.h"
 
 // CNewsCollectorDlg dialog
 class CNewsCollectorDlg : public CDialog
@@ -34,4 +34,7 @@ public:
 
 	afx_msg void OnCbnSelchangeComboCollector();
 	afx_msg void OnBnClickedButton1();
+
+	CTPCollectorData *pCollectorData;
+	afx_msg void OnDestroy();
 };
