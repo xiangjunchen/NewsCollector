@@ -6,6 +6,8 @@
 #include "NewsCollector.h"
 #include "NewsCollectorDlg.h"
 #include "TPCollectorsEdit.h"
+#include "Python.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -201,11 +203,224 @@ void CNewsCollectorDlg::OnBnClickedButton2()
 	editDlg.DoModal();
 }
 
-
-
+char* WideChartoAnsi(wchar_t * pWideChar)
+{
+	if (NULL == pWideChar)
+		return NULL;
+	char* pAnsi = NULL;
+	int needBytes = WideCharToMultiByte(CP_ACP,0,pWideChar,-1, NULL,0, NULL, NULL);
+	if (needBytes >0)
+	{
+		pAnsi = new char[needBytes + 1];
+		ZeroMemory(pAnsi, needBytes + 1);
+		WideCharToMultiByte(CP_ACP, 0, pWideChar, -1, pAnsi,needBytes, NULL, NULL);
+	}
+	return pAnsi;
+}
+wchar_t* MultiByteToWide(char* pMultiChar)
+{
+	if (!pMultiChar)
+		return NULL;
+	wchar_t* pWideBuf = NULL;
+	int needWideBytes = MultiByteToWideChar(CP_ACP, 0, pMultiChar, -1, NULL, NULL);
+	if (needWideBytes >0)
+	{
+		pWideBuf = new wchar_t[needWideBytes + 1];
+		ZeroMemory(pWideBuf, (needWideBytes+1) * sizeof(wchar_t));
+		MultiByteToWideChar(CP_ACP, 0, pMultiChar, -1, pWideBuf, needWideBytes);
+	}
+	return pWideBuf;
+}
 void CNewsCollectorDlg::OnBnClickedButton1()
 {
 	CString sUrl = _T("");
 	GetDlgItem(IDC_EDIT_URL)->GetWindowText(sUrl);
 
+	PyObject* pName = NULL;
+
+	PyObject* pModule =NULL;
+
+	PyObject* pDict = NULL;
+
+	PyObject* pFunc = NULL;
+
+	PyObject* pArgs = NULL;
+
+	PyObject* pRet = NULL;
+
+	do
+
+	{
+
+		// 初始化Python
+
+		// 在使用Python系统前，必须使用Py_Initialize对其
+
+		// 进行初始化。它会载入Python的内建模块并添加系统路
+
+		// 径到模块搜索路径中。这个函数没有返回值，检查系统
+
+		// 是否初始化成功需要使用Py_IsInitialized。
+
+		Py_Initialize();
+
+
+
+		// 检查初始化是否成功
+
+		if (!Py_IsInitialized())
+
+		{
+
+			break;
+
+		}
+
+
+
+		// 添加当前路径
+
+		// 把输入的字符串作为Python代码直接运行，返回
+
+		// 表示成功，-1表示有错。大多时候错误都是因为字符串
+
+		// 中有语法错误。
+
+		PyRun_SimpleString("import sys");
+
+		PyRun_SimpleString("sys.path.append('./')");
+
+
+
+		// 载入名为PyPlugin的脚本
+
+		pName = PyString_FromString("PyPluginTest");
+
+		pModule = PyImport_Import(pName);
+
+		if (!pModule)
+
+		{
+
+			//printf("can't findPyPlugin.py\n");
+
+			break;
+
+		}
+
+
+
+		pDict = PyModule_GetDict(pModule);
+
+		if (!pDict)
+
+		{
+
+			break;
+
+		}
+
+
+
+		// 找出函数名为AddMult的函数
+
+		pFunc = PyDict_GetItemString(pDict, "AddMult");
+
+		if (!pFunc || !PyCallable_Check(pFunc))
+
+		{
+
+			//printf("can't findfunction [AddMult]\n");
+
+			break;
+
+		}
+
+
+
+		pArgs = Py_BuildValue("ii", 12, 14);
+
+		PyObject* pRet = PyEval_CallObject(pFunc,pArgs);
+
+		int a = 0;
+
+		int b = 0;
+
+		if (pRet && PyArg_ParseTuple(pRet,"ii", &a,&b))
+
+		{
+
+			//printf("Function[AddMult] call successful a + b = %d, a * b = %d\n", a, b);
+
+			//nRet = 0;
+
+		}
+
+
+
+		if (pArgs)
+
+			Py_DECREF(pArgs);
+
+		if (pFunc)
+
+			Py_DECREF(pFunc);
+
+		// 找出函数名为HelloWorld的函数
+
+		pFunc = PyDict_GetItemString(pDict, "HelloWorld");
+
+		if (!pFunc || !PyCallable_Check(pFunc))
+
+		{
+
+			//printf("can't findfunction [HelloWorld]\n");
+
+			break;
+
+		}
+		CString sJc1 = _T("jc1"),sJc2 = _T("jc2");
+		PyObject *pyParams = PyTuple_New(2);  
+		PyObject *py1 = PyString_FromString(WideChartoAnsi(sJc1.GetBuffer()));  
+		PyObject *py2 = PyString_FromString(WideChartoAnsi(sJc2.GetBuffer()));  
+		PyTuple_SetItem(pyParams, 0, py1);  
+		PyTuple_SetItem(pyParams, 1, py2);  
+		// ok, call the function    
+		PyObject *pyResult = PyObject_CallObject(pFunc, pyParams);  
+		if(pyResult)  
+		{  
+			char* pRe =PyString_AsString(pyResult);
+			CString sRe = MultiByteToWide(pRe);
+			AfxMessageBox(sRe);
+		}
+
+	} while (0);
+
+
+
+	if (pRet)
+
+		Py_DECREF(pRet);
+
+	if (pArgs)
+
+		Py_DECREF(pArgs);
+
+	if (pFunc)
+
+		Py_DECREF(pFunc);
+
+	if (pDict)
+
+		Py_DECREF(pDict);
+
+	if (pModule)
+
+		Py_DECREF(pModule);
+
+	if (pName)
+
+		Py_DECREF(pName);
+
+	Py_Finalize();
 }
