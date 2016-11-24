@@ -11,6 +11,18 @@
 #endif
 
 
+struct TPCollector 
+{
+	CString m_sName;
+	CString m_sStartUrl;
+};
+typedef CArray<TPCollector ,TPCollector &> TPCollectorArray;
+
+TPCollectorArray g_aCollector;
+
+
+
+
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialog
@@ -64,6 +76,8 @@ BEGIN_MESSAGE_MAP(CNewsCollectorDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON2, &CNewsCollectorDlg::OnBnClickedButton2)
+	ON_CBN_SELCHANGE(IDC_COMBO_COLLECTOR, &CNewsCollectorDlg::OnCbnSelchangeComboCollector)
+	ON_BN_CLICKED(IDC_BUTTON1, &CNewsCollectorDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -100,7 +114,35 @@ BOOL CNewsCollectorDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
+	TPCollector stuCollector;
+	stuCollector.m_sName = _T("ÍøÒ×ÐÂÎÅ");
+	stuCollector.m_sStartUrl = _T("");
+
+	g_aCollector.RemoveAll();
+	g_aCollector.Add(stuCollector);
+
+	CComboBox *pComboBox = (CComboBox*)GetDlgItem(IDC_COMBO_COLLECTOR);
+	for (int l = 0 ; l < g_aCollector.GetSize(); l ++)
+	{
+		pComboBox->AddString(g_aCollector[l].m_sName);
+	}
+	if(g_aCollector.GetSize() > 0)
+	{
+		pComboBox->SetCurSel(0);
+		GetDlgItem(IDC_EDIT_URL)->SetWindowText(g_aCollector[0].m_sStartUrl);
+	}
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CNewsCollectorDlg::OnCbnSelchangeComboCollector()
+{
+	CComboBox *pComboBox = (CComboBox*)GetDlgItem(IDC_COMBO_COLLECTOR);
+
+	int iIndex = pComboBox->GetCurSel();
+	if(iIndex < g_aCollector.GetSize() && iIndex > 0)
+	{
+		GetDlgItem(IDC_EDIT_URL)->SetWindowText(g_aCollector[iIndex].m_sStartUrl);
+	}
 }
 
 void CNewsCollectorDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -157,4 +199,11 @@ void CNewsCollectorDlg::OnBnClickedButton2()
 {
 	CTPCollectorsEdit editDlg;
 	editDlg.DoModal();
+}
+
+
+
+void CNewsCollectorDlg::OnBnClickedButton1()
+{
+	
 }

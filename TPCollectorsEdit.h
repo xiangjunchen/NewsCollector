@@ -20,4 +20,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
+
+public:
+	CListCtrl *m_pListCtrl;
 };
