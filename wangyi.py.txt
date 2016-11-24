@@ -1,0 +1,31 @@
+#encoding=gbk
+import win32com
+#http://news.163.com/special/0001220O/news_json.js
+##进入具体新闻页面，得到评论页id和新闻id
+#var config = {
+    #"productKey" : "a2869674571f77b5a0867c3d71db5856",
+    #"docId" : "B9C8EJDC0001124J",
+#模板http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/threads/B9C8EJDC0001124J
+#{"against":0,"boardId":"news_guonei8_bbs","channelId":"0001","cmtAgainst":0,"cmtVote":2754,...
+ #,"url":"http://news.163.com/15/1126/18/B9C8EJDC0001124J.html","vote":0}
+#cmtVote":2754 为总评论数
+
+#具体评论
+#一.  http://news.163.com/15/1126/18/B9C8EJDC0001124J.html  新闻
+    ##进入具体新闻页面，得到评论页id和新闻id
+    #var config = {
+        #"productKey" : "a2869674571f77b5a0867c3d71db5856",
+        #"docId" : "B9C8EJDC0001124J",
+#二. http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/threads/B9C8EJDC0001124J 新闻汇总信息
+    ##进入汇总信息中获取boardId， cmtVote关键字
+    #{"boardId":"news_guonei8_bbs","cmtVote":2754,...
+     #,"url":"http://news.163.com/15/1126/18/B9C8EJDC0001124J.html","vote":0}
+    #"cmtVote":2754 为总评论数
+    #"boardId":"news_guonei8_bbs" 为评论URL子路径    
+#三. http://comment.news.163.com/news_guonei8_bbs/B9C8EJDC0001124J.html 评论
+    #？？？如何从评论页中获取评论数据来源
+    #offset = 0
+    #limit = 30    
+    #http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867' \
+                         #'c3d71db5856/threads/%s/comments/newList?offset=%s&limit=%s'%(uid,str(offset),str(limit))    
+    #http://comment.news.163.com/data/news_guonei8_bbs/df/B9C8EJDC0001124J_1.html 评论数据来源
