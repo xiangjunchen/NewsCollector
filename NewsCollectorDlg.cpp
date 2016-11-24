@@ -205,5 +205,7 @@ void CNewsCollectorDlg::OnBnClickedButton2()
 
 void CNewsCollectorDlg::OnBnClickedButton1()
 {
-	
+	CString sUrl = _T("");
+	GetDlgItem(IDC_EDIT_URL)->GetWindowText(sUrl);
+
 }
