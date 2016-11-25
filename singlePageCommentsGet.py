@@ -1,49 +1,78 @@
-#coding:utf-8  
-import urllib  
+#coding:gbk 
+import urllib2  
 import re  
 import json  
-#ç”¨æˆ·id+è¯„è®º+é¡¶  
-def getHtml(url):  
-    page=urllib.urlopen(url)  
-    html=page.read()  
-    return html  
-def getItems(html):  
-    #ä¸€å¼€å§‹å†™çš„æ—¶å€™è¿˜åœ¨è¯¥å‡½æ•°çš„å¼€å§‹åŠ äº†è¿™ä¸¤å¥ä»£ç ï¼Œä¸»è¦å°±æ˜¯è¿™ä¸¤ä¸ªæ–¹æ³•æ²¡æœ‰äº†è§£æ¸…æ¥š  
-    #data1=json.dumps(html)  
-    #data=json.loads(data1)  
-    #è¿™æ˜¯æ²¡å¿…è¦çš„ï¼Œç›´æ¥æ›¿æ¢å†è½¬æ¢å°±å¯ä»¥ã€‚å°†å¼€å¤´çš„var replyData=å’Œç»“å°¾çš„;æ›¿æ¢æ‰å†è½¬æˆPythonæ—¶æ‰èƒ½å¯¹å­—å…¸è¿›è¡Œå¤„ç†  
-    reg=re.compile(" \[<a href=''>")  
-    data=reg.sub(' ',html)  
-    reg1=re.compile("var replyData=")  
-    data=reg1.sub(' ',data)  
-    reg2=re.compile('<\\\/a>\]')  
-    data=reg2.sub('',data)  
-    reg3=re.compile(';')  
-    data=reg3.sub('',data)  
-    reg4=re.compile('<span(.*?)/span>')#<span>(.*?)</span>è¿™æ ·åŒ¹é…æ˜¯ä¸å¯¹çš„,æ›¿æ¢ä¸æ‰ï¼ˆè¿˜ä¸æ¸…æ¥šåŸå› ï¼‰  
-    data=reg4.sub('',data)  
-    reg5=re.compile('')  
-    data=reg5.sub('',data)  
-    data=json.loads(data)#è¿™å¥ä»£ç çš„ä½œç”¨æ˜¯å°†æ•°æ®è½¬æ¢æˆPythonå¯¹è±¡ï¼Œç„¶åæ ¹æ®å­—å…¸çš„keyå–å€¼å¾—åˆ°æƒ³è¦çš„å†…å®¹  
-    f=open('wy.txt','a+')  
-    for i in data['hotPosts']:  
-        f.write(i['1']['f'].encode('utf-8')+'\n')  
-        f.write(i['1']['b'].encode('utf-8')+'\n')  
-        f.write(i['1']['v'].encode('utf-8')+'\n')  
-    f.close()  
-  
-url='http://comment.news.163.com/data/news_guonei8_bbs/df/B9C8EJDC0001124J_1.html'#ï¼ˆçƒ­é—¨è·Ÿå¸–ï¼‰  
-html=getHtml(url)  
-getItems(html) 
+import time
+import random
+#ÓÃ»§id+ÆÀÂÛ+¶¥  
+def GetPage(comment_url):
+    uid = comment_url.split('.html')[0].split('/')[-1]
+    offset = 0
+    limit = 30
+    while(True):
+        js_url = 'http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867' \
+            'c3d71db5856/threads/%s/comments/newList?offset=%s&limit=%s'%(uid,str(offset),str(limit))
+        #js_url = comment_url
+        response = urllib2.urlopen(js_url)
+        html = response.read()
+        datas = json.loads(html)
+        newListSize =datas["newListSize"]
+        if newListSize!=0:
+            ParseData(datas)
+            limit = 30
+            offset += limit
+            time.sleep(random.randint(5,10))
+        else:
+            # self.log.info('Parsing page wrong!')
+            break
 
-#http://news.163.com/16/1124/13/C6L2K0IP000187VE.html
+def ParseData(datas):
+    commentIds = datas['commentIds']
+    comments = datas['comments']
+    for ids in commentIds:
+        idList=ids.split(',')
+        id_n = idList[-1]#×îºóÒ»¸öidÎªµ±Ç°Ìû×ÓµÄid
+        #field =self.field_factory.create('ping_lun')
+        # ÆÀÂÛÎÄÕÂÁ´½Ó
+        #field.set('news_url',self.docurl)
+        #ÆÀÂÛÊ±¼ä´Á
+        time=comments[id_n]['createTime']
+        #field.set('ping_lun_shi_jian',self.datatransform(time))
+        # »Ø¸´ÊıÁ¿
+        #field.set('hui_fu_shu',0)
+        # µãÔŞÊıÁ¿
+        #field.set('dian_zan_shu',comments[id_n]['vote'])
+        #ÆÀÂÛid
+        #field.set('ping_lun_id',id_n)
+        # ÓÃ»§êÇ³Æ
+        #field.set('yong_hu_ming',comments[id_n]['user']['nickname'])
+        # ÓÃ»§Ê¡·İ
+        #field.set('yong_hu_sheng_fen',comments[id_n]['user']['location'])#Ê±¼ä´Á¸ñÊ½
+        # ÆÀÂÛÄÚÈİ
+        content_all =u''
+        for id in idList:
+            if id in comments.keys():
+                content=comments[id]['content']
+                content_all+=content
+        #print content_all
+        #field.set('ping_lun_nei_rong',content_all)
+        #field.set('id',id_n)
+        #data =field.make()
+        #if data:
+            ## print json.dumps(data,ensure_ascii=False)
+            #self.db.put(data)
+            #self.log.info('save data sucess!')
 
-#"productKey" : a2869674571f77b5a0867c3d71db5856
+def datatransform(data):
+    #½«ÄêÔÂÈÕ×ª»»ÎªÊ±¼ä´Á2016-08-08 10:01:56
 
-#http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/threads/C6L2K0IP000187VE
-
-#"boardId": news2_bbs
-
-#http://comment.news.163.com/news2_bbs/C6L2K0IP000187VE.html
-
-#http://comment.news.163.com/api/v1/products/a2869674571f77b5a0867c3d71db5856/threads/C6L2K0IP000187VE/comments/newList?offset=0&limit=30
+    timeStamp=time.mktime(time.strptime(data,'%Y-%m-%d %H:%M:%S'))
+    # if not data:
+    #     data = '2016-01-02'
+    # data=data.decode('gbk')
+    # timeArray = data.split('-')
+    # d = datetime.datetime(int(timeArray[0]), int(timeArray[1]), int(timeArray[2]))
+    # timeStamp=int(time.mktime(d.timetuple()))
+    return timeStamp
+GetPage("http://sports.163.com/16/1125/10/C6N8K85J0005877V.html")
+print "end "
