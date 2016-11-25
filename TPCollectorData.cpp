@@ -7,7 +7,7 @@ CTPCollectorData::CTPCollectorData(void)
 {
 	TPCollector *stuCollector = new TPCollector;
 	stuCollector->m_sName = _T("ÍøÒ×ÐÂÎÅ");
-	stuCollector->m_sStartUrl = _T("http://www.ibm.com/developerworks/cn/linux/l-pythc/");
+	stuCollector->m_sStartUrl = _T("http://news.163.com/16/1124/13/C6L2K0IP000187VE.html");
 
 	g_aCollector.RemoveAll();
 	g_aCollector.Add(stuCollector);

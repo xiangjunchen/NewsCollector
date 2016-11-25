@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CNewsCollectorDlg, CDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO_COLLECTOR, &CNewsCollectorDlg::OnCbnSelchangeComboCollector)
 	ON_BN_CLICKED(IDC_BUTTON1, &CNewsCollectorDlg::OnBnClickedButton1)
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_BUTTON3, &CNewsCollectorDlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -203,6 +204,8 @@ void CNewsCollectorDlg::OnBnClickedButton1()
 	CString sCurrent = cVcPython.CollectorFromUrl(sUrl);
 	CString sOutput;
 	GetDlgItem(IDC_EDIT_COLLECTORSTATUS)->GetWindowText(sOutput);
+	if(!sOutput.IsEmpty())
+		sOutput += _T("\r\n");
 	sOutput += _T("\r\n");
 	sOutput += sCurrent;
 	GetDlgItem(IDC_EDIT_COLLECTORSTATUS)->SetWindowText(sOutput);
@@ -217,4 +220,9 @@ void CNewsCollectorDlg::OnDestroy()
 	delete pCollectorData;
 	pCollectorData = NULL;
 	// TODO: Add your message handler code here
+}
+
+void CNewsCollectorDlg::OnBnClickedButton3()
+{
+	GetDlgItem(IDC_EDIT_COLLECTORSTATUS)->SetWindowText(_T(""));
 }

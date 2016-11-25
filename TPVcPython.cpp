@@ -99,10 +99,20 @@ void* CTPVcPython::GetFunctionProc(CString sFuntionName,void *pPlugin)
 
 CString CTPVcPython::CollectorFromUrl(CString sUrl)
 {
-	CString sRe = _T("");
-	PyObject* pPlugin = (PyObject*)LoadPythonFile(_T("PyPluginTest"));
-	PyObject* pFunc   = (PyObject*)GetFunctionProc(_T("NewsCollect"),pPlugin);
-	char* pRe;
+	CString sRe = _T("Failed!");
+	PyObject* pPlugin = (PyObject*)LoadPythonFile(_T("singlePageContentGet"));
+	if(!pPlugin)	
+	{
+		sRe = _T("LoadPythonFile Failed!");
+		return sRe;
+	}
+	PyObject* pFunc   = (PyObject*)GetFunctionProc(_T("ParserCommentPage"),pPlugin);
+	if(!pFunc)		
+	{
+		sRe = _T("GetFunctionProc Failed!");
+		return sRe;
+	}
+	char* pRe = NULL;
 	PyObject *pyParams = PyTuple_New(1);  
 	PyObject *py1 = PyString_FromString(WideChartoAnsi(sUrl.GetBuffer()));  
 	//PyObject *py2 = PyString_FromString(WideChartoAnsi(sJc2.GetBuffer()));  
@@ -115,6 +125,10 @@ CString CTPVcPython::CollectorFromUrl(CString sUrl)
 		pRe =PyString_AsString(pyResult);
 		sRe = MultiByteToWide(pRe);
 		//AfxMessageBox(sRe);
+	}
+	else
+	{
+		sRe = _T("PyObject_CallObject Return Failed! ");
 	}
 	if (pyParams)
 		Py_DECREF(pyParams);
