@@ -18,5 +18,6 @@ def ParserCommentPage(urlContent):
         #comment_url = 'http://comment.news.163.com/%s/%s.html'%group%uid
         print title
         print commentCount        
-    return title,commentCount
+        return title + "parser success ! comment count is "+commentCount
+    return "parser faild! "
 ParserCommentPage('http://news.163.com/16/1124/13/C6L2K0IP000187VE.html')
