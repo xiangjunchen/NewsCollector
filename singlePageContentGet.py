@@ -20,6 +20,7 @@ def ParserCommentPage(urlContent):
     sRe += SaveToDB(data)
     return sRe
 def SaveToDB(data):
+    #需要判断当前待加入条目是否已经在库中存在，通过post_url_src查询判断
     # 打开数据库连接
     db = MySQLdb.connect("localhost","root","123","weiyue" )   
     # 使用cursor()方法获取操作游标 
